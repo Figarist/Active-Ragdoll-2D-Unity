@@ -4,9 +4,9 @@ public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D rb;
     [SerializeField] private float jumpForce, playerSpeed, positionRadius;
-    [SerializeField] private Vector2 jumpHeight;
     [SerializeField] private LayerMask ground;
-    [SerializeField] private Transform playerPosition;
+    [SerializeField] private Transform groundPoint;
+    [SerializeField] private float breakForce, breakTorque;
     
     private Animator _animator;
     private bool isOnGround;
@@ -20,6 +20,12 @@ public class PlayerController : MonoBehaviour
             {
                 Physics2D.IgnoreCollision(colliders[i],colliders[j]);
             }
+        }
+        var hingeJoints = transform.GetComponentsInChildren<HingeJoint2D>();
+        foreach (var joint in hingeJoints)
+        {
+            joint.breakForce = breakForce;
+            joint.breakTorque = breakTorque;
         }
     }
 
@@ -40,7 +46,13 @@ public class PlayerController : MonoBehaviour
         }
         else _animator.Play("Idle");
 
-        isOnGround = Physics2D.OverlapCircle(playerPosition.position, positionRadius, ground);
+        isOnGround = Physics2D.OverlapCircle(groundPoint.position, positionRadius, ground);
         if (isOnGround && Input.GetKeyDown(KeyCode.Space)) rb.AddForce(Vector2.up * (jumpForce * Time.deltaTime));
+    }
+
+    public void PartFellOf(Collider2D collider2D)
+    {
+        var colliders = transform.GetComponentsInChildren<Collider2D>();
+        foreach (var t in colliders) { Physics2D.IgnoreCollision(collider2D,t,false); }
     }
 }
