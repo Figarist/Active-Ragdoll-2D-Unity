@@ -5,6 +5,13 @@ using UnityEngine;
 
 public class Grab : MonoBehaviour
 {
+    public enum Side
+    {
+        Left,
+        Right
+    }
+
+    [SerializeField] private Side side;
     [SerializeField] private KeyCode mouseButton;
     private bool isHold;
 
@@ -34,4 +41,5 @@ public class Grab : MonoBehaviour
             }
         }
     }
+
 }
